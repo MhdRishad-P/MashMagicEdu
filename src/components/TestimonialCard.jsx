@@ -3,7 +3,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger); // ✅ only register ScrollTrigger
+gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
@@ -11,28 +11,28 @@ const testimonials = [
     author: "Ayesha Rahman",
     position: "Parent of Grade 7 Student",
     img: "images/testimonial1.jpeg",
-    textColor: "text-violet-800", // green
+    textColor: "text-violet-800",
   },
   {
     text: "We tried many platforms but NOTHING worked like this. One-on-one attention made a huge difference.",
     author: "Mohammed Imran",
     position: "Parent",
     img: "images/testimonial2.jpeg",
-    textColor: "text-green-800", // red
+    textColor: "text-green-800",
   },
   {
     text: "As a parent, I finally feel relaxed. The weekly reports & communication are absolutely perfect.",
     author: "Priya Sharma",
     position: "Mother of Grade 6 Student",
     img: "images/testimonial3.jpeg",
-    textColor: "text-violet-800", // blue / purple
+    textColor: "text-violet-800",
   },
   {
     text: "My son improved in confidence, discipline, and academics. The best decision we ever made!",
     author: "Arun Kumar",
     position: "Parent",
     img: "images/testimonial1.jpeg",
-    textColor: "text-violet-800", // yellow / orange
+    textColor: "text-violet-800",
   },
 ];
 
@@ -43,8 +43,8 @@ export default function TestimonialCard() {
     const authorBlocks = gsap.utils.toArray(".author-block");
     const imageWrappers = gsap.utils.toArray(".image-wrapper");
 
-    // ✅ Make first testimonial visible initially
-    gsap.set([quotes[0], authorBlocks[0]], { y: -10, opacity: 1 });
+    // FIRST VISIBLE ITEM
+    gsap.set([quotes[0], authorBlocks[0]], { opacity: 1, y: -10 });
     gsap.set(imageWrappers[0], {
       opacity: 1,
       scale: 1,
@@ -66,18 +66,12 @@ export default function TestimonialCard() {
     contents.forEach((_, i) => {
       if (i === contents.length - 1) return;
 
-      // fade & slide OUT current quote + author block
-      tl.to(
-        [quotes[i], authorBlocks[i]],
-        {
-          opacity: 0,
-          y: 20,
-          duration: 1,
-          stagger: 0.05,
-        },
-        "+=0.3"
-      )
-        // animate IN next image
+      tl.to([quotes[i], authorBlocks[i]], {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        stagger: 0.05,
+      })
         .to(
           imageWrappers[i + 1],
           {
@@ -90,7 +84,6 @@ export default function TestimonialCard() {
           },
           "<"
         )
-        // fade & slide IN next quote + author block
         .to(
           [quotes[i + 1], authorBlocks[i + 1]],
           {
@@ -107,7 +100,7 @@ export default function TestimonialCard() {
   return (
     <>
       {/* TITLE */}
-      <div className="pt-16  text-center px-4">
+      <div className="pt-16 text-center px-4">
         <h2 className="text-3xl sm:text-4xl md:text-4xl font-semibold text-[#008080]">
           What Parents & Students Say
         </h2>
@@ -117,7 +110,16 @@ export default function TestimonialCard() {
       </div>
 
       {/* SCROLL SECTION */}
-      <div className="testimonial-container relative w-full h-screen overflow-hidden">
+      <div
+        className="
+          testimonial-container 
+          relative w-full 
+          h-[650px] 
+          sm:h-[700px]
+          md:h-screen
+          overflow-hidden
+        "
+      >
         {testimonials.map((item, i) => (
           <div
             key={i}
@@ -131,11 +133,11 @@ export default function TestimonialCard() {
               text-center lg:text-left
             "
           >
-            {/* TEXT + AUTHOR BLOCK */}
-            <div className="flex-1 max-w-xl md:pt-20 pt-30 ">
+            {/* TEXT BLOCK */}
+            <div className="flex-1 max-w-xl pt-6 md:pt-[20px]">
               <p
                 className={`
-                  quote opacity-0
+                  quote opacity-0 
                   leading-relaxed 
                   text-base sm:text-md
                   ${item.textColor}
@@ -154,15 +156,16 @@ export default function TestimonialCard() {
               </div>
             </div>
 
-            {/* IMAGE */}
+            {/* IMAGE BLOCK → moved upward */}
             <div
               className="
                 image-wrapper 
-                w-[220px] sm:w-[260px] md:w-[320px] lg:w-[360px]
+                w-[220px] sm:w-[260px] md:w-[320px] lg:w-[360px] 
                 aspect-[4/5]
                 p-3 sm:p-4
                 rounded-xl bg-white 
                 opacity-0 scale-75
+                mt-4 sm:mt-6 md:mt-[-20px] lg:mt-[-40px]
                 shadow-[0_13px_27px_-5px_rgba(50,50,93,0.25),0_8px_16px_-8px_rgba(0,0,0,0.3)]
               "
             >
