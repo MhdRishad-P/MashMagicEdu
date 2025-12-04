@@ -117,7 +117,7 @@ export default function TestimonialCard() {
       </div>
 
       {/* SCROLL SECTION */}
-      <div className="testimonial-container relative w-full h-screen overflow-hidden md:h-[650px]">
+      <div className="testimonial-container relative w-full h-screen overflow-hidden">
         {testimonials.map((item, i) => (
           <div
             key={i}
