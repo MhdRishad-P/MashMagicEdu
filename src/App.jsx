@@ -7,6 +7,7 @@ import Navbar from './components/Hero/Navbar'
 import WhyUs from './components/Hero/WhyUs'
 import OurPrograms from './components/OurPrograms'
 import CardGrid from './components/CardGrid'
+import TestimonialCards from './components/TestimonialCard'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,6 +18,7 @@ function App() {
       <Navbar/>
       <CardGrid/>
       <OurPrograms/>
+      <TestimonialCards/>
      
     </>
   )

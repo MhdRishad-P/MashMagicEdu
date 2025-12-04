@@ -16,61 +16,112 @@ const programs = [
 
 export default function OurProgramsMarquee() {
   const marqueeRef = useRef(null);
-  const speedRef = useRef(1);
+  const speedRef = useRef(0.4); // base auto speed
   const lastTouchX = useRef(0);
   const titleRefs = useRef([]);
   const buttonRef = useRef(null);
 
-  /* MARQUEE SPEED CONTROL */
+  const isTouchDevice =
+    typeof window !== "undefined" &&
+    ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+
+  /* ------------------------
+       MARQUEE MOVEMENT
+  -------------------------*/
   useEffect(() => {
     const marquee = marqueeRef.current;
+    if (!marquee) return;
+
+    const wrapper = marquee.parentElement; // .marquee-wrapper
     let currentX = 0;
 
-    gsap.ticker.add(() => {
+    const tick = () => {
       currentX += speedRef.current;
       marquee.style.transform = `translateX(${currentX}px)`;
 
-      if (currentX <= -marquee.scrollWidth / 2) currentX = 0;
-      if (currentX > 0) currentX = -marquee.scrollWidth / 2;
-    });
+      const limit = marquee.scrollWidth / 2;
+      if (currentX <= -limit) currentX = 0;
+      if (currentX > 0) currentX = -limit;
+    };
 
+    gsap.ticker.add(tick);
+
+    /* Desktop mouse speed */
     const handleMouseMove = (e) => {
       const center = window.innerWidth / 2;
-      speedRef.current = (e.clientX - center) / 150;
+      const v = (e.clientX - center) / 150;
+      speedRef.current = v;
     };
 
-    const handleTouchStart = (e) => {
+    if (!isTouchDevice) {
+      window.addEventListener("mousemove", handleMouseMove);
+    }
+
+    /* Mobile touch scrolling */
+    let touchActive = false;
+
+    const onTouchStart = (e) => {
+      if (!e.touches.length) return;
+      touchActive = true;
       lastTouchX.current = e.touches[0].clientX;
+      speedRef.current = 0; // reset speed when touching
     };
 
-    const handleTouchMove = (e) => {
+    const onTouchMove = (e) => {
+      if (!touchActive || !e.touches.length) return;
+
       const touchX = e.touches[0].clientX;
       const deltaX = touchX - lastTouchX.current;
-      speedRef.current = deltaX / 10;
       lastTouchX.current = touchX;
+
+      // ⭐ FASTER MOBILE SPEED (smooth)
+      const targetSpeed = Math.max(-10, Math.min(5, deltaX / 12));
+
+      gsap.to(speedRef, {
+        current: targetSpeed,
+        duration: 0.12,
+        ease: "power2.out",
+      });
     };
 
-    const handleTouchEnd = () => {
-      gsap.to(speedRef, { current: 0.2, duration: 1, ease: "power2.out" });
+    const onTouchEnd = () => {
+      touchActive = false;
+
+      // Smooth return to auto scroll
+      gsap.to(speedRef, {
+        current: 0.4,
+        duration: 1,
+        ease: "power3.out",
+      });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("touchstart", handleTouchStart);
-    window.addEventListener("touchmove", handleTouchMove);
-    window.addEventListener("touchend", handleTouchEnd);
+    if (isTouchDevice && wrapper) {
+      wrapper.addEventListener("touchstart", onTouchStart, { passive: true });
+      wrapper.addEventListener("touchmove", onTouchMove, { passive: true });
+      wrapper.addEventListener("touchend", onTouchEnd);
+      wrapper.addEventListener("touchcancel", onTouchEnd);
+    }
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleTouchEnd);
+      gsap.ticker.remove(tick);
+
+      if (!isTouchDevice) {
+        window.removeEventListener("mousemove", handleMouseMove);
+      }
+
+      if (isTouchDevice && wrapper) {
+        wrapper.removeEventListener("touchstart", onTouchStart);
+        wrapper.removeEventListener("touchmove", onTouchMove);
+        wrapper.removeEventListener("touchend", onTouchEnd);
+        wrapper.removeEventListener("touchcancel", onTouchEnd);
+      }
     };
-  }, []);
+  }, [isTouchDevice]);
 
-  /* TITLE ANIMATION */
+  /* ------------------------
+       TITLE ANIMATION
+  -------------------------*/
   useEffect(() => {
-    if (!titleRefs.current.length) return;
-
     gsap.fromTo(
       titleRefs.current,
       { opacity: 0, y: 40 },
@@ -88,10 +139,11 @@ export default function OurProgramsMarquee() {
     );
   }, []);
 
-  /* ⭐ BUTTON FLOAT ANIMATION ⭐ */
+  /* ------------------------
+       FLOATING BUTTON
+  -------------------------*/
   useEffect(() => {
     if (!buttonRef.current) return;
-
     gsap.to(buttonRef.current, {
       y: -10,
       duration: 1.5,
@@ -103,7 +155,7 @@ export default function OurProgramsMarquee() {
 
   return (
     <section className="py-10 overflow-hidden bg-white">
-      <h2 className="text-2xl md:text-5xl sm:text-2xl  font-semibold text-center text-[#008080] mb-8">
+      <h2 className="text-2xl md:text-5xl font-semibold text-center text-[#008080] mb-8">
         Explore Our Programs
       </h2>
 
@@ -115,7 +167,15 @@ export default function OurProgramsMarquee() {
         >
           {[...programs, ...programs].map((p, i) => (
             <div key={i} className="flex flex-col items-center min-w-[180px]">
-              <div className="transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_6px_18px_rgba(0,128,128,0.35)]">
+
+              {/* ICON — hover only on desktop */}
+              <div
+                className={`transition-all duration-300 ${
+                  !isTouchDevice
+                    ? "hover:scale-110 hover:drop-shadow-[0_6px_18px_rgba(0,128,128,0.35)]"
+                    : ""
+                }`}
+              >
                 <img
                   src={p.img}
                   alt={p.subtitle}
@@ -123,9 +183,10 @@ export default function OurProgramsMarquee() {
                 />
               </div>
 
+              {/* TITLE */}
               <p
                 ref={(el) => (titleRefs.current[i] = el)}
-                className="text-gray-600  text-sm font-semibold mt-2 tracking-wide"
+                className="text-gray-600 text-sm font-semibold mt-2 tracking-wide"
                 style={{ fontFamily: "Poppins" }}
               >
                 {p.subtitle}
@@ -135,15 +196,15 @@ export default function OurProgramsMarquee() {
         </div>
       </div>
 
-      {/* CONFUSING QUESTION + FLOATING BUTTON */}
+      {/* QUESTION + BUTTON */}
       <div className="text-center mt-14 mb-6">
-        <h3 className="text-sm lg:text-xl text-md font-semibold text-gray-500 mb-10">
+        <h3 className="text-sm lg:text-xl font-semibold text-gray-500 mb-10">
           Still confused which program suits your child?
         </h3>
 
         <button
           ref={buttonRef}
-          className="bg-[#006666] hover:bg-[#0808] text-white px-8 py-3 rounded-lg text-[14px] transition"
+          className="bg-[#006666] text-white px-8 py-3 rounded-lg text-[14px] transition hover:bg-[#004c4c]"
         >
           CONNECT US
         </button>

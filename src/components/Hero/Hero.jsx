@@ -10,7 +10,6 @@ const Hero = () => {
   const imgRef = useRef(null);
   const circle1Ref = useRef(null);
   const circle2Ref = useRef(null);
-  const starRef = useRef(null);
 
   const counterRef = useRef([]);
   const numbers = [
@@ -20,7 +19,6 @@ const Hero = () => {
   ];
 
   useGSAP(() => {
-    // Left content animation
     gsap.from(leftRef.current, {
       x: -80,
       opacity: 0,
@@ -28,16 +26,14 @@ const Hero = () => {
       ease: "power3.out",
     });
 
-    // Hero image animation
     gsap.from(imgRef.current, {
       y: 60,
       opacity: 0,
-      duration: 1.5,
+      duration: 1.4,
       ease: "power3.out",
       delay: 0.3,
     });
 
-    // Counter animations (no shake)
     counterRef.current.forEach((el, i) => {
       const countEl = el.querySelector(".count");
 
@@ -65,119 +61,102 @@ const Hero = () => {
       );
     });
 
-    // Floating background shapes
     gsap.to(circle1Ref.current, {
-      scale: 1.05,
+      scale: 1.1,
       duration: 2,
       repeat: -1,
       yoyo: true,
     });
 
     gsap.to(circle2Ref.current, {
-      scale: 1.2,
+      scale: 1.15,
       duration: 3,
       repeat: -1,
       yoyo: true,
-    });
-
-    gsap.to(starRef.current, {
-      rotate: 360,
-      duration: 30,
-      repeat: -1,
-      ease: "linear",
     });
   });
 
   return (
     <>
-      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 pt-[100px] mx-auto relative overflow-hidden px-4">
+      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 pt-[100px] px-4 max-w-[1500px] mx-auto relative overflow-hidden">
 
         {/* LEFT SECTION */}
         <div ref={leftRef} className="flex flex-col justify-center">
-          <div className="text-center md:text-left space-y-3">
-            <p className="text-gray-500 text-1xl md:text-4xl font-semibold">
+
+          {/* TEXT */}
+          <div className="text-center md:text-left space-y-4">
+            <p className="text-gray-500 text-xl md:text-2xl font-semibold">
               Welcome To Mash Magic
             </p>
 
-            <h1 className="text-4xl sm:text-5xl font-semibold lg:text-6xl leading-tight">
-              <span className="font-bold lg:text-7xl text-[#008080]">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-tight font-semibold text-center md:text-left">
+              <span className="font-bold lg:text-7xl text-[#008080] block">
                 India’s <span className="text-black">#</span>
-                <span
-                  style={{ fontFamily: "IBM Plex Mono" }}
-                  className="text-black text-7xl sm:text-8xl italic"
-                >
+                <span style={{ fontFamily: "IBM Plex Mono" }} className="text-black italic text-7xl sm:text-8xl">
                   1
                 </span>
               </span>
-              <span className="text-[#008080] block sm:inline">
-                {" "}
-                Mentoring-Based{" "}
-              </span>
-              <span>Learning Platform</span>
+              <span className="text-[#008080]"> Mentoring-Based </span>
+              <div>Learning Platform</div>
             </h1>
 
-            <p className="text-gray-700 text-sm sm:text-base">
+            <p className="text-gray-700 text-sm sm:text-base max-w-md mx-auto md:mx-0 text-center md:text-left">
               We don’t just teach — We Guide, Mentor and Elevate your child’s learning journey.
             </p>
           </div>
 
-          {/* WHITE BOX – balanced padding */}
+          {/* BUTTON */}
+          <div className="mt-7 text-center md:text-left">
+            <button className="bg-[#008080] text-white px-7 py-3 rounded-full font-semibold hover:bg-[#FABB2A] transition mx-auto md:mx-0">
+              BOOK FREE DEMO
+            </button>
+
+            <p className="text-gray-600 text-xs sm:text-sm mt-2 text-center md:text-left">
+              30 Minute Session - Parent + Student
+            </p>
+          </div>
+
+          {/* WHITE COUNTER BOX (FULLY FIXED) */}
           <div
             className="
               mt-8 bg-white shadow-xl rounded-2xl
-              px-5 py-4 sm:px-6 sm:py-5
-              w-full max-w-[850px] mx-auto
-              flex flex-wrap justify-center items-center
-              gap-4 sm:gap-6
-              overflow-x-hidden
+              px-6 py-5
+              w-full
+              max-w-full
+              flex flex-wrap 
+              justify-center md:justify-between 
+              items-center 
+              gap-6
             "
           >
-            {/* COUNTERS */}
             {numbers.map((item, i) => (
-              <div
-                key={i}
-                ref={(el) => (counterRef.current[i] = el)}
-                className="text-center flex-shrink px-3 py-1"
-              >
-                {/* fixed-width number → no shaking */}
-                <span className="text-2xl sm:text-3xl font-bold text-[#008080] inline-block w-[55px] text-center">
+              <div key={i} ref={(el) => (counterRef.current[i] = el)} className="text-center flex-1 min-w-[100px]">
+                <span className="text-3xl sm:text-4xl font-bold text-[#008080] block">
                   <span className="count"></span>+
                 </span>
-                <p className="text-gray-700 text-xs sm:text-sm mt-1">
-                  {item.label}
-                </p>
+                <p className="text-gray-700 text-xs sm:text-sm mt-1">{item.label}</p>
               </div>
             ))}
-
-            {/* BUTTON + description */}
-            <div className="flex flex-col items-center flex-shrink px-3 py-1 text-center">
-              <button className="bg-[#006666] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg hover:bg-[#FABB2A] transition text-sm sm:text-base w-full">
-                BOOK FREE DEMO
-              </button>
-
-              <p className="text-gray-600 text-xs sm:text-sm mt-2">
-                30 Minute Session - Parent+Student
-              </p>
-            </div>
           </div>
+
         </div>
 
-        {/* RIGHT IMAGE */}
-        <div className="flex justify-end items-center relative mt-10 md:mt-0">
-          <svg className="absolute inset-0 w-full h-full opacity-50">
-            <circle ref={circle1Ref} cx="150" cy="150" r="80" fill="#FABB2A" />
-            <circle ref={circle2Ref} cx="450" cy="300" r="150" fill="#008080" />
+        {/* RIGHT SECTION */}
+        <div className="flex justify-center items-center relative mt-10 md:mt-0">
+          <svg className="absolute inset-0 w-full h-full opacity-40 pointer-events-none">
+            <circle ref={circle1Ref} cx="150" cy="150" r="90" fill="#FABB2A" />
+            <circle ref={circle2Ref} cx="450" cy="300" r="160" fill="#008080" />
           </svg>
 
           <img
             ref={imgRef}
             src={HeroImg}
             alt="Student"
-            className="relative z-10 max-w-full
-            w-[220px] sm:w-[280px] md:w-[360px] xl:w-[450px]
-            object-contain"
+            className="relative z-10 object-contain
+              w-[230px] sm:w-[300px] md:w-[380px] lg:w-[450px] xl:w-[520px]"
           />
         </div>
+
       </div>
     </>
   );

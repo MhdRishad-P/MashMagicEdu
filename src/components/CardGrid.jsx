@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Register ScrollTrigger
 gsap.registerPlugin(ScrollTrigger);
 
 /* -----------------------------
@@ -18,7 +17,7 @@ const Card3D = ({ title, points, imageUrl, index }) => {
     const image = imageRef.current;
     const children = contentRef.current?.children || [];
 
-    /* ScrollTrigger Entrance Animation */
+    /* Scroll Fade-In */
     gsap.fromTo(
       card,
       { opacity: 0, y: 70 },
@@ -29,7 +28,7 @@ const Card3D = ({ title, points, imageUrl, index }) => {
         ease: "power3.out",
         scrollTrigger: {
           trigger: card,
-          start: "top 90%", // mobile friendly
+          start: "top 90%",
           end: "top 60%",
           toggleActions: "play none none reverse",
         },
@@ -67,7 +66,7 @@ const Card3D = ({ title, points, imageUrl, index }) => {
       }
     );
 
-    /* 3D Hover Tilt (Desktop Only) */
+    /* Hover Tilt (Desktop Only) */
     const isDesktop = window.innerWidth > 768;
 
     if (isDesktop) {
@@ -111,7 +110,13 @@ const Card3D = ({ title, points, imageUrl, index }) => {
         shadow-xl 
         overflow-visible 
         h-56 sm:h-60 md:h-64 lg:h-72 mb-5 
-        w-full
+
+        /* RESPONSIVE WIDTH FIX */
+        w-full 
+        lg:w-[90%] 
+        xl:w-[95%]
+        mx-auto
+        
         px-3 sm:px-4 py-4
       "
       style={{ transformStyle: "preserve-3d" }}
@@ -148,7 +153,7 @@ const Card3D = ({ title, points, imageUrl, index }) => {
       <div
         ref={contentRef}
         className="
-          ml-28 sm:ml-32 md:ml-40 lg:ml-44 
+          ml-28 sm:ml-32 md:ml-40 lg:ml-30
           flex flex-col justify-center 
           h-full gap-1 bg-white rounded-2xl p-3
         "
@@ -178,12 +183,12 @@ const CardGrid = () => {
     {
       title: "Magic Mentor™ Support",
       points: ["Daily check-ins", "Emotional + academic support", "Teacher coordination"],
-      imageUrl: "images/hero.png",
+      imageUrl: "images/mentor1.png",
     },
     {
       title: "True One-to-One Tuition",
       points: ["Personalized sessions", "Expert teachers", "Flexible timing"],
-      imageUrl: "images/hero.png",
+      imageUrl: "images/kid.png",
     },
     {
       title: "Weekly Parent Reports",
@@ -213,12 +218,22 @@ const CardGrid = () => {
         Why Mash Magic?
       </h1>
 
-      <div className="w-full max-w-6xl px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="w-full max-w-7xl px-6">
+
+        {/* RESPONSIVE GRID FIX */}
+        <div className="
+          grid 
+          grid-cols-1 
+          sm:grid-cols-2 
+          lg:grid-cols-2 
+          xl:grid-cols-3 
+          gap-10
+        ">
           {cardsData.map((card, i) => (
             <Card3D key={i} index={i} {...card} />
           ))}
         </div>
+
       </div>
     </div>
   );
