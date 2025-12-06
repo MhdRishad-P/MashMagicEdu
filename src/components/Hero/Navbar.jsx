@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Logo from "../../assets/Logo.png";
+import { Link } from "react-router-dom";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -49,12 +51,13 @@ export default function Navbar() {
       >
         {/* LOGO */}
         <div className="flex items-center cursor-pointer">
-          <img
-            src={Logo}
-            alt="Logo"
-            className="w-15 h-12 object-contain"
-
-          />
+      <Link to="/" className="flex items-center cursor-pointer">
+  <img
+    src={Logo}
+    alt="Logo"
+    className="w-15 h-12 object-contain"
+  />
+</Link>
         </div>
 
         {/* DESKTOP MENU */}
@@ -66,7 +69,7 @@ export default function Navbar() {
 
           <button
             className="
-              bg-[#008080] text-white
+              bg-[#F8BA2B] text-black
               font-bold text-sm tracking-wider
               py-2.5 px-6 rounded-full transition-all duration-300
               shadow-lg hover:shadow-xl ml-4 

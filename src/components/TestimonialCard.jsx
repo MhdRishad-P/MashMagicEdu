@@ -38,70 +38,61 @@ const testimonials = [
 
 export default function TestimonialCard() {
   useGSAP(() => {
-    const contents = gsap.utils.toArray(".content");
-    const quotes = gsap.utils.toArray(".quote");
-    const authorBlocks = gsap.utils.toArray(".author-block");
-    const imageWrappers = gsap.utils.toArray(".image-wrapper");
+    const cards = gsap.utils.toArray(".testimonial-card");
+    const images = gsap.utils.toArray(".image-wrapper");
 
-    // FIRST VISIBLE ITEM
-    gsap.set([quotes[0], authorBlocks[0]], { opacity: 1, y: -10 });
-    gsap.set(imageWrappers[0], {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      x: 0,
+    // IMAGE ANIMATION
+    images.forEach((img) => {
+      const angle = gsap.utils.random(-12, 12);
+
+      gsap.fromTo(
+        img,
+        { opacity: 0, y: 100, scale: 0.85, rotate: angle - 20 },
+        {
+          scrollTrigger: {
+            trigger: img,
+            start: "top 90%",
+            end: "top 40%",
+            scrub: true,
+          },
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotate: angle,
+          ease: "power2.out",
+        }
+      );
     });
 
-    const tl = gsap.timeline({
-      defaults: { ease: "power2.out" },
-      scrollTrigger: {
-        trigger: ".testimonial-container",
-        pin: true,
-        start: "top top",
-        end: `+=${contents.length * 100}%`,
-        scrub: 2,
-      },
-    });
+    // TEXT ANIMATION
+    cards.forEach((card) => {
+      const quote = card.querySelector(".quote");
+      const author = card.querySelector(".author-block");
 
-    contents.forEach((_, i) => {
-      if (i === contents.length - 1) return;
-
-      tl.to([quotes[i], authorBlocks[i]], {
-        opacity: 0,
-        y: 20,
-        duration: 1,
-        stagger: 0.05,
-      })
-        .to(
-          imageWrappers[i + 1],
-          {
-            scale: 1,
-            opacity: 1,
-            y: (i + 1) * 10,
-            x: (i + 1) * -6,
-            rotate: (i + 1) * 3 * (i % 2 === 0 ? 1 : -1),
-            duration: 1.5,
+      gsap.fromTo(
+        [quote, author],
+        { opacity: 0, y: 50 },
+        {
+          scrollTrigger: {
+            trigger: card,
+            start: "top 95%",
+            end: "top 60%",
+            scrub: true,
           },
-          "<"
-        )
-        .to(
-          [quotes[i + 1], authorBlocks[i + 1]],
-          {
-            opacity: 1,
-            y: -10,
-            duration: 1,
-            stagger: 0.05,
-          },
-          "<+=0.2"
-        );
+          opacity: 1,
+          y: 0,
+          ease: "power2.out",
+          stagger: 0.2,
+        }
+      );
     });
   });
 
   return (
     <>
       {/* TITLE */}
-      <div className="pt-16 text-center px-4">
-        <h2 className="text-3xl sm:text-4xl md:text-4xl font-semibold text-[#008080]">
+      <div className="pt-14 text-center px-4">
+        <h2 className="text-3xl sm:text-4xl font-semibold text-[#008080]">
           What Parents & Students Say
         </h2>
         <p className="text-gray-600 mt-3 text-sm md:text-base max-w-xl mx-auto">
@@ -109,75 +100,64 @@ export default function TestimonialCard() {
         </p>
       </div>
 
-      {/* SCROLL SECTION */}
-      <div
-        className="
-          testimonial-container 
-          relative w-full 
-          h-[650px] 
-          sm:h-[700px]
-          md:h-screen
-          overflow-hidden
-        "
-      >
-        {testimonials.map((item, i) => (
-          <div
-            key={i}
-            className="
-              content absolute inset-0 
-              w-full h-full 
-              flex flex-col lg:flex-row 
-              items-center justify-center 
-              gap-6 md:gap-10 
-              px-6 sm:px-8 lg:px-20
-              text-center lg:text-left
-            "
-          >
-            {/* TEXT BLOCK */}
-            <div className="flex-1 max-w-xl pt-6 md:pt-[20px]">
-              <p
-                className={`
-                  quote opacity-0 
-                  leading-relaxed 
-                  text-base sm:text-md
-                  ${item.textColor}
-                `}
-              >
-                {item.text}
-              </p>
+      {/* TESTIMONIAL GRID */}
+      <div className="max-w-7xl mx-auto mt-14 mb-20 px-4">
 
-              <div className="author-block opacity-0 mt-4 sm:mt-5">
-                <h4 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
-                  {item.author}
-                </h4>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                  {item.position}
-                </p>
-              </div>
-            </div>
+        {/* BIG WIDE CARDS — 2 per row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-            {/* IMAGE BLOCK → moved upward */}
+          {testimonials.map((item, i) => (
             <div
+              key={i}
               className="
-                image-wrapper 
-                w-[220px] sm:w-[260px] md:w-[320px] lg:w-[360px] 
-                aspect-[4/5]
-                p-3 sm:p-4
-                rounded-xl bg-white 
-                opacity-0 scale-75
-                mt-4 sm:mt-6 md:mt-[-20px] lg:mt-[-40px]
-                shadow-[0_13px_27px_-5px_rgba(50,50,93,0.25),0_8px_16px_-8px_rgba(0,0,0,0.3)]
+                testimonial-card
+                bg-white rounded-2xl shadow-xl
+                p-10 sm:p-9 
+                flex flex-col md:flex-row items-center gap-8
+                w-full
               "
             >
-              <img
-                src={item.img}
-                alt="Testimonial"
-                className="w-full h-full object-cover rounded-lg"
-              />
+              {/* BIG IMAGE CARD */}
+              <div
+                className="
+                  image-wrapper
+                  w-[260px] sm:w-[230px] md:w-[220px] lg:w-[240px]
+                  aspect-[4/5]
+                  p-3 sm:p-4
+                  rounded-xl bg-white 
+                  shadow-[0_12px_35px_rgba(0,0,0,0.15)]
+                  flex items-center justify-center origin-center
+                "
+              >
+                <img
+                  src={item.img}
+                  alt={item.author}
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+
+              {/* TEXT SECTION */}
+              <div className="flex-1">
+                <p
+                  className={`quote text-md sm:text-md leading-relaxed ${item.textColor}`}
+                >
+                  {item.text}
+                </p>
+
+                <div className="author-block mt-5">
+                  <h4 className="text-xl font-semibold text-gray-900">
+                    {item.author}
+                  </h4>
+                  <p className="text-sm text-gray-500">{item.position}</p>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+
+        </div>
       </div>
     </>
   );
 }
+
+

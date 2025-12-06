@@ -62,3 +62,49 @@ ul{
   background-size: 200% 200%;
   animation: gradient-x 3s linear infinite;
 }
+
+/* Button Base Style */
+.premium-gray-button {
+  /* Dimensions & Display */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  min-width: 250px;
+  
+  /* Typography */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none; /* For use on <a> tags */
+  color: black;
+  font-weight:700;
+  font-family:'Roboto'; /* White text for contrast */
+  
+  /* Background & Color (The Gray Premium Look) */
+  background: #FABB2A;/* Subtle diagonal gradient */
+  border: none;
+  border-radius: 8px; /* Modern rounded corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Soft, lifted shadow */
+  
+  /* Transition for smooth effects */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  
+  /* Cursor */
+  cursor: pointer;
+}
+
+/* Hover Effect - The Premium Interaction */
+.premium-gray-button:hover {
+  background: #095454; /* Slightly lighter gradient on hover */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow for a more "pressed" or "lifted" feel */
+  transform: translateY(-2px); /* Subtle lift */
+  color: white;
+}
+
+/* Active/Press State */
+.premium-gray-button:active {
+  background: #5a6268;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Flat shadow to simulate being pressed down */
+  transform: translateY(0);
+}

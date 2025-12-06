@@ -198,13 +198,13 @@ export default function OurProgramsMarquee() {
 
       {/* QUESTION + BUTTON */}
       <div className="text-center mt-14 mb-6">
-        <h3 className="text-sm lg:text-xl font-semibold text-gray-500 mb-10">
+        <h3 className="text-sm lg:text-xl font-semibold text-black mb-10">
           Still confused which program suits your child?
         </h3>
 
         <button
           ref={buttonRef}
-          className="bg-[#006666] text-white px-8 py-3 rounded-lg text-[14px] transition hover:bg-[#004c4c]"
+          className="premium-gray-button"
         >
           CONNECT US
         </button>
