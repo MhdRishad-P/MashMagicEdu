@@ -5,9 +5,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 /* =====================================================
-      GLASS CARD COMPONENT (NEW PREMIUM UI)
+      GLASS CARD COMPONENT WITH REAL 3D EFFECT
 ===================================================== */
-const CardGlass = ({ title, points, imageUrl }) => {
+const CardGlass = ({ title, subtitle, points, imageUrl }) => {
   const cardRef = useRef(null);
   const imageRef = useRef(null);
   const contentRef = useRef(null);
@@ -15,9 +15,8 @@ const CardGlass = ({ title, points, imageUrl }) => {
   useEffect(() => {
     const card = cardRef.current;
     const img = imageRef.current;
-    const contentChildren = contentRef.current?.children || [];
 
-    /* Fade-in animation */
+    /* === ScrollTrigger Fade-in === */
     gsap.fromTo(
       card,
       { opacity: 0, y: 80 },
@@ -30,39 +29,58 @@ const CardGlass = ({ title, points, imageUrl }) => {
       }
     );
 
+    /* === Second Scroll Trigger (image pop animation) === */
     gsap.fromTo(
-      contentChildren,
-      { opacity: 0, x: 15 },
+      img,
+      { scale: 0.7, opacity: 0 },
       {
+        scale: 1,
         opacity: 1,
-        x: 0,
-        duration: 0.6,
-        stagger: 0.12,
-        ease: "power2.out",
-        scrollTrigger: { trigger: card, start: "top 90%" },
+        duration: 1,
+        ease: "back.out(1.7)",
+        scrollTrigger: { trigger: card, start: "top 85%" },
       }
     );
 
-    /* Hover animation (desktop only) */
+    /* === REAL 3D Hover Animation (Desktop Only) === */
     if (window.innerWidth > 768) {
       const tilt = (e) => {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
+        const rotateX = (y - rect.height / 2) / 12;
+        const rotateY = (rect.width / 2 - x) / 12;
+
         gsap.to(card, {
-          rotateX: (y - rect.height / 2) / 20,
-          rotateY: (rect.width / 2 - x) / 20,
-          transformPerspective: 800,
-          duration: 0.25,
+          rotateX: rotateX,
+          rotateY: rotateY,
+          transformPerspective: 900,
+          transformOrigin: "center",
+          duration: 0.3,
+          ease: "power2.out",
         });
 
-        gsap.to(img, { scale: 1.1, duration: 0.25 });
+        gsap.to(img, {
+          scale: 1.18,
+          duration: 0.3,
+          ease: "power2.out",
+        });
       };
 
       const reset = () => {
-        gsap.to(card, { rotateX: 0, rotateY: 0, duration: 0.5 });
-        gsap.to(img, { scale: 1, duration: 0.3 });
+        gsap.to(card, {
+          rotateX: 0,
+          rotateY: 0,
+          duration: 0.5,
+          ease: "power3.out",
+        });
+
+        gsap.to(img, {
+          scale: 1,
+          duration: 0.35,
+          ease: "power3.out",
+        });
       };
 
       card.addEventListener("mousemove", tilt);
@@ -79,27 +97,26 @@ const CardGlass = ({ title, points, imageUrl }) => {
     <div
       ref={cardRef}
       className="
-        relative w-full 
+        relative 
         rounded-3xl 
-        p-6 sm:p-7
+        mx-auto
+        py-2 
+        my-6
         backdrop-blur-xl
-        bg-white/50
-        border border-white/30
-        shadow-[0_10px_30px_rgba(0,0,0,0.12)]
+        bg-gray-200
+        border border-white/40
+        shadow-[0_6px_20px_rgba(0,0,0,0.12)]
         transition-all duration-300
-        hover:shadow-[0_14px_40px_rgba(0,0,0,0.18)]
+        hover:shadow-[0_16px_35px_rgba(0,0,0,0.2)]
+        w-[90%] sm:w-[80%] md:w-[70%]
       "
       style={{ transformStyle: "preserve-3d" }}
     >
       {/* Floating Icon */}
-      <div className="absolute -top-15 left-1/2 -translate-x-1/2 z-20">
+      <div className="absolute -top-14 left-1/2 -translate-x-1/2 z-20">
         <div
           ref={imageRef}
-          className=" 
-            p-3 sm:p-4 
-            w-[150px] h-[150px] sm:w-[150px] sm:h-[150px]
-            transition-all
-          "
+          className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px]"
           style={{ transform: "translateZ(45px)" }}
         >
           <img
@@ -111,18 +128,15 @@ const CardGlass = ({ title, points, imageUrl }) => {
       </div>
 
       {/* TEXT */}
-      <div
-        ref={contentRef}
-        className="mt-16 flex flex-col justify-center text-center gap-3"
-        style={{ transform: "translateZ(20px)" }}
-      >
-        <h2 className="text-lg md:text-xl font-semibold text-gray-900">
-          {title}
-        </h2>
+      <div className="mt-16 flex flex-col w-[90%] mx-auto justify-center bg-white text-center gap-1 py-8 rounded-2xl">
+        <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
 
-        <ul className="text-gray-700 text-xs sm:text-sm space-y-1 text-left mx-auto w-fit">
+        {/* SUBTITLE */}
+        <p className="text-sm text-gray-500 -mt-1">{subtitle}</p>
+
+        <ul className="text-gray-700 text-sm sm:text-sm space-y-1 mx-auto w-fit  ">
           {points.map((p, i) => (
-            <li key={i} className="flex gap-2">
+            <li key={i} className="flex gap-1">
               <span className="text-[#008080] font-bold">•</span>
               <span>{p}</span>
             </li>
@@ -140,50 +154,66 @@ const CardGrid = () => {
   const cardsData = [
     {
       title: "Magic Mentor™ Support",
-      points: ["Daily check-ins", "Emotional + academic support", "Teacher coordination"],
+      subtitle: "Daily guidance for every student",
+      points: [
+        "Daily check-ins",
+        "Emotional + academic support",
+        "Teacher coordination",
+      ],
       imageUrl: "images/support.png",
     },
     {
-      title: "True One-to-One Tuition",
-      points: ["Personalized sessions", "Expert teachers", "Flexible timing"],
+      title: "One-to-One Tuition",
+      subtitle: "Personalized learning that adapts",
+      points: ["Expert tutors", "Personal sessions", "Flexible timings"],
       imageUrl: "images/tution1.png",
     },
     {
       title: "Weekly Parent Reports",
+      subtitle: "Transparent communication",
       points: ["Progress updates", "Strength insights", "Early alerts"],
       imageUrl: "images/report.png",
     },
     {
       title: "Complete Learning System",
+      subtitle: "All-in-one study partner",
       points: ["Homework help", "Test prep", "Study roadmap"],
       imageUrl: "images/complete1.png",
     },
     {
-      title: "Student Growth & Well-Being",
-      points: ["Confidence building", "Habit formation", "Development"],
+      title: "Student Growth",
+      subtitle: "Mindset + Skill development",
+      points: ["Confidence building", "Habits", "Skill development"],
       imageUrl: "images/growth.png",
     },
     {
       title: "Parent Priority System",
-      points: ["Dedicated support", "Fast response", "Monthly reviews"],
+      subtitle: "Fast support for parents",
+      points: ["Dedicated support", "Fast replies", "Monthly reviews"],
       imageUrl: "images/priority.png",
     },
   ];
 
   return (
-    <div className="bg-white flex flex-col items-center py-16 px-6">
-      <h1 className="text-[#008080] text-3xl md:text-5xl font-semibold mb-14">
+    <div className="bg-white w-full flex flex-col items-center py-10 px-0">
+      <h1 className="text-[#008080] text-3xl md:text-5xl font-semibold text-center">
         Why Mash Magic?
       </h1>
 
-      <div className="w-full max-w-7xl">
+      {/* SUBTITLE */}
+      <p className="text-gray-600 text-sm md:text-md mt-2 mb-8 px-4 text-center">
+        One Platform. Multiple Personalised Solutions for every Student
+      </p>
+
+      <div className="w-full max-w-[1500px]">
         <div
           className="
             grid
             grid-cols-1
             sm:grid-cols-2
-            xl:grid-cols-3
-            gap-14
+            lg:grid-cols-3
+            gap-6 
+            px-2
           "
         >
           {cardsData.map((card, i) => (
