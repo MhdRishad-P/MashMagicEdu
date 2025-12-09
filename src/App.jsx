@@ -9,6 +9,8 @@ import TestimonialCards from "./components/TestimonialCard";
 import Footer from "./components/Footer";
 import ContactForm from "./components/ContactForm";
 import WhyUs from "./components/Hero/WhyUs";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+
 
 function App() {
   // Section refs for scrolling
@@ -16,6 +18,9 @@ function App() {
   const whyUsRef = useRef(null);
   const programsRef = useRef(null);
   const testimonialRef = useRef(null);
+  
+ 
+
 
   return (
     <>
@@ -49,7 +54,9 @@ function App() {
       {/* FOOTER */}
       <Footer />
 
-       <ContactForm/>
+
+  
+
     </>
   );
 }

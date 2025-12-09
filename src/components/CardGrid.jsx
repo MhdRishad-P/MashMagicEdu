@@ -5,21 +5,20 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 /* =====================================================
-      GLASS CARD COMPONENT WITH REAL 3D EFFECT
+      GLASS CARD (FULLY RESPONSIVE + 3D DESKTOP)
 ===================================================== */
 const CardGlass = ({ title, subtitle, points, imageUrl }) => {
   const cardRef = useRef(null);
   const imageRef = useRef(null);
-  const contentRef = useRef(null);
 
   useEffect(() => {
     const card = cardRef.current;
     const img = imageRef.current;
 
-    /* === ScrollTrigger Fade-in === */
+    /* Fade-in animation */
     gsap.fromTo(
       card,
-      { opacity: 0, y: 80 },
+      { opacity: 0, y: 70 },
       {
         opacity: 1,
         y: 0,
@@ -29,66 +28,48 @@ const CardGlass = ({ title, subtitle, points, imageUrl }) => {
       }
     );
 
-    /* === Second Scroll Trigger (image pop animation) === */
+    /* Image pop animation */
     gsap.fromTo(
       img,
       { scale: 0.7, opacity: 0 },
       {
         scale: 1,
         opacity: 1,
-        duration: 1,
-        ease: "back.out(1.7)",
-        scrollTrigger: { trigger: card, start: "top 85%" },
+        duration: 1.1,
+        ease: "back.out(1.6)",
+        scrollTrigger: { trigger: card, start: "top 88%" },
       }
     );
 
-    /* === REAL 3D Hover Animation (Desktop Only) === */
-    if (window.innerWidth > 768) {
-      const tilt = (e) => {
+    /* 3D hover effect — Desktop only */
+    if (window.innerWidth >= 768) {
+      const move3D = (e) => {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        const rotateX = (y - rect.height / 2) / 12;
-        const rotateY = (rect.width / 2 - x) / 12;
-
         gsap.to(card, {
-          rotateX: rotateX,
-          rotateY: rotateY,
+          rotateX: (y - rect.height / 2) / 12,
+          rotateY: (rect.width / 2 - x) / 12,
           transformPerspective: 900,
-          transformOrigin: "center",
           duration: 0.3,
           ease: "power2.out",
         });
 
-        gsap.to(img, {
-          scale: 1.18,
-          duration: 0.3,
-          ease: "power2.out",
-        });
+        gsap.to(img, { scale: 1.15, duration: 0.3, ease: "power2.out" });
       };
 
-      const reset = () => {
-        gsap.to(card, {
-          rotateX: 0,
-          rotateY: 0,
-          duration: 0.5,
-          ease: "power3.out",
-        });
-
-        gsap.to(img, {
-          scale: 1,
-          duration: 0.35,
-          ease: "power3.out",
-        });
+      const reset3D = () => {
+        gsap.to(card, { rotateX: 0, rotateY: 0, duration: 0.5 });
+        gsap.to(img, { scale: 1, duration: 0.4 });
       };
 
-      card.addEventListener("mousemove", tilt);
-      card.addEventListener("mouseleave", reset);
+      card.addEventListener("mousemove", move3D);
+      card.addEventListener("mouseleave", reset3D);
 
       return () => {
-        card.removeEventListener("mousemove", tilt);
-        card.removeEventListener("mouseleave", reset);
+        card.removeEventListener("mousemove", move3D);
+        card.removeEventListener("mouseleave", reset3D);
       };
     }
   }, []);
@@ -97,18 +78,18 @@ const CardGlass = ({ title, subtitle, points, imageUrl }) => {
     <div
       ref={cardRef}
       className="
-        relative 
+        relative
         rounded-3xl 
         mx-auto
-        py-2 
-        my-6
+        pt-16 pb-5
+        my-5
         backdrop-blur-xl
         bg-gray-200
         border border-white/40
         shadow-[0_6px_20px_rgba(0,0,0,0.12)]
         transition-all duration-300
-        hover:shadow-[0_16px_35px_rgba(0,0,0,0.2)]
-        w-[90%] sm:w-[80%] md:w-[70%]
+        hover:shadow-[0_16px_35px_rgba(0,0,0,0.20)]
+        w-[90%] sm:w-[85%] md:w-[90%]
       "
       style={{ transformStyle: "preserve-3d" }}
     >
@@ -116,7 +97,11 @@ const CardGlass = ({ title, subtitle, points, imageUrl }) => {
       <div className="absolute -top-14 left-1/2 -translate-x-1/2 z-20">
         <div
           ref={imageRef}
-          className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px]"
+          className="
+            w-[100px] h-[100px]
+            sm:w-[130px] sm:h-[130px]
+            md:w-[140px] md:h-[140px]
+          "
           style={{ transform: "translateZ(45px)" }}
         >
           <img
@@ -127,16 +112,19 @@ const CardGlass = ({ title, subtitle, points, imageUrl }) => {
         </div>
       </div>
 
-      {/* TEXT */}
-      <div className="mt-16 flex flex-col w-[90%] mx-auto justify-center bg-white text-center gap-1 py-8 rounded-2xl">
-        <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+      {/* TEXT BOX */}
+      <div className="flex flex-col w-[90%] mx-auto bg-white/80 text-center gap-2 py-6 rounded-2xl shadow-md">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">
+          {title}
+        </h2>
 
-        {/* SUBTITLE */}
-        <p className="text-sm text-gray-500 -mt-1">{subtitle}</p>
+        <p className="text-xs sm:text-sm md:text-base text-gray-500 -mt-1">
+          {subtitle}
+        </p>
 
-        <ul className="text-gray-700 text-sm sm:text-sm space-y-1 mx-auto w-fit  ">
+        <ul className="text-gray-700 text-xs md:text-base space-y-1 mx-auto w-fit">
           {points.map((p, i) => (
-            <li key={i} className="flex gap-1">
+            <li key={i} className="flex gap-2 items-start text-left">
               <span className="text-[#008080] font-bold">•</span>
               <span>{p}</span>
             </li>
@@ -148,7 +136,7 @@ const CardGlass = ({ title, subtitle, points, imageUrl }) => {
 };
 
 /* =====================================================
-                GRID WRAPPER
+                FULLY RESPONSIVE GRID WRAPPER
 ===================================================== */
 const CardGrid = () => {
   const cardsData = [
@@ -195,25 +183,24 @@ const CardGrid = () => {
   ];
 
   return (
-    <div className="bg-white w-full flex flex-col items-center py-10 px-0">
+    <div className="bg-white w-full flex flex-col items-center py-10 px-4">
       <h1 className="text-[#008080] text-3xl md:text-5xl font-semibold text-center">
         Why Mash Magic?
       </h1>
 
-      {/* SUBTITLE */}
-      <p className="text-gray-600 text-sm md:text-md mt-2 mb-8 px-4 text-center">
+      <p className="text-gray-600 text-sm md:text-lg mt-2 mb-10 px-4 text-center max-w-[700px]">
         One Platform. Multiple Personalised Solutions for every Student
       </p>
 
-      <div className="w-full max-w-[1500px]">
+      <div className="w-full max-w-[1500px] mx-auto">
         <div
           className="
             grid
             grid-cols-1
             sm:grid-cols-2
             lg:grid-cols-3
-            gap-6 
-            px-2
+            gap-8
+            px-2 sm:px-4 md:px-6
           "
         >
           {cardsData.map((card, i) => (
