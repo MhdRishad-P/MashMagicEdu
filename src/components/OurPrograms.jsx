@@ -5,18 +5,18 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const programs = [
-  { img: "/images/program1.png", subtitle: "Bright Bridge" },
-  { img: "/images/program1.png", subtitle: "Classmate" },
-  { img: "/images/program1.png", subtitle: "Crash 45" },
-  { img: "/images/program1.png", subtitle: "Magic Revision" },
-  { img: "/images/program1.png", subtitle: "Final Touch" },
-  { img: "/images/program1.png", subtitle: "Mission X" },
-  { img: "/images/program1.png", subtitle: "Magic Mentor" },
+  { img: "/images/program1.png", subtitle: "Skill-building foundation" },
+  { img: "/images/program1.png", subtitle: "Everyday learning support" },
+  { img: "/images/program1.png", subtitle: "Full subject mastery in 45 hours" },
+  { img: "/images/program1.png", subtitle: "Quick chapter revision" },
+  { img: "/images/program1.png", subtitle: "Last-stage exam prep" },
+  { img: "/images/program1.png", subtitle: "High-performance training" },
+  { img: "/images/program1.png", subtitle: "Full mentorship system" },
 ];
 
 export default function OurProgramsMarquee() {
   const marqueeRef = useRef(null);
-  const speedRef = useRef(0.4); // base auto speed
+  const speedRef = useRef(0.4);
   const lastTouchX = useRef(0);
   const titleRefs = useRef([]);
   const buttonRef = useRef(null);
@@ -25,14 +25,12 @@ export default function OurProgramsMarquee() {
     typeof window !== "undefined" &&
     ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
-  /* ------------------------
-       MARQUEE MOVEMENT
-  -------------------------*/
+  /* MARQUEE MOVEMENT */
   useEffect(() => {
     const marquee = marqueeRef.current;
     if (!marquee) return;
 
-    const wrapper = marquee.parentElement; // .marquee-wrapper
+    const wrapper = marquee.parentElement;
     let currentX = 0;
 
     const tick = () => {
@@ -57,14 +55,14 @@ export default function OurProgramsMarquee() {
       window.addEventListener("mousemove", handleMouseMove);
     }
 
-    /* Mobile touch scrolling */
+    /* Mobile touch scroll */
     let touchActive = false;
 
     const onTouchStart = (e) => {
       if (!e.touches.length) return;
       touchActive = true;
       lastTouchX.current = e.touches[0].clientX;
-      speedRef.current = 0; // reset speed when touching
+      speedRef.current = 0;
     };
 
     const onTouchMove = (e) => {
@@ -74,7 +72,6 @@ export default function OurProgramsMarquee() {
       const deltaX = touchX - lastTouchX.current;
       lastTouchX.current = touchX;
 
-      // ⭐ FASTER MOBILE SPEED (smooth)
       const targetSpeed = Math.max(-10, Math.min(5, deltaX / 12));
 
       gsap.to(speedRef, {
@@ -86,8 +83,6 @@ export default function OurProgramsMarquee() {
 
     const onTouchEnd = () => {
       touchActive = false;
-
-      // Smooth return to auto scroll
       gsap.to(speedRef, {
         current: 0.4,
         duration: 1,
@@ -105,9 +100,7 @@ export default function OurProgramsMarquee() {
     return () => {
       gsap.ticker.remove(tick);
 
-      if (!isTouchDevice) {
-        window.removeEventListener("mousemove", handleMouseMove);
-      }
+      if (!isTouchDevice) window.removeEventListener("mousemove", handleMouseMove);
 
       if (isTouchDevice && wrapper) {
         wrapper.removeEventListener("touchstart", onTouchStart);
@@ -118,9 +111,7 @@ export default function OurProgramsMarquee() {
     };
   }, [isTouchDevice]);
 
-  /* ------------------------
-       TITLE ANIMATION
-  -------------------------*/
+  /* TITLE ENTRY ANIMATION */
   useEffect(() => {
     gsap.fromTo(
       titleRefs.current,
@@ -139,9 +130,7 @@ export default function OurProgramsMarquee() {
     );
   }, []);
 
-  /* ------------------------
-       FLOATING BUTTON
-  -------------------------*/
+  /* FLOATING BUTTON ANIMATION */
   useEffect(() => {
     if (!buttonRef.current) return;
     gsap.to(buttonRef.current, {
@@ -155,20 +144,23 @@ export default function OurProgramsMarquee() {
 
   return (
     <section className="py-10 overflow-hidden bg-white">
-      <h2 className="text-2xl md:text-5xl font-semibold text-center text-[#008080] mb-8">
+
+      {/* SECTION TITLE */}
+      <h2 className="text-2xl md:text-5xl font-semibold text-center text-[#008080] mb-3">
         Explore Our Programs
       </h2>
 
+      <p className="text-gray-600 text-base md:text-xl text-center mb-10">
+        Personalised learning programs designed for every student’s needs
+      </p>
+
       {/* MARQUEE */}
       <div className="relative w-full overflow-hidden marquee-wrapper">
-        <div
-          ref={marqueeRef}
-          className="flex items-center whitespace-nowrap gap-12 px-4"
-        >
+        <div ref={marqueeRef} className="flex items-center whitespace-nowrap gap-12 px-4">
           {[...programs, ...programs].map((p, i) => (
-            <div key={i} className="flex flex-col items-center min-w-[180px]">
+            <div key={i} className="flex flex-col items-center min-w-[200px]">
 
-              {/* ICON — hover only on desktop */}
+              {/* ICON */}
               <div
                 className={`transition-all duration-300 ${
                   !isTouchDevice
@@ -183,10 +175,10 @@ export default function OurProgramsMarquee() {
                 />
               </div>
 
-              {/* TITLE */}
+              {/* SUBTITLE */}
               <p
                 ref={(el) => (titleRefs.current[i] = el)}
-                className="text-gray-600 text-sm font-semibold mt-2 tracking-wide"
+                className="text-gray-700 text-sm font-medium mt-2 text-center leading-snug"
                 style={{ fontFamily: "Poppins" }}
               >
                 {p.subtitle}
@@ -196,18 +188,29 @@ export default function OurProgramsMarquee() {
         </div>
       </div>
 
-      {/* QUESTION + BUTTON */}
-      <div className="text-center mt-14 mb-6">
-        <h3 className="text-sm lg:text-xl font-semibold text-black mb-10">
+      {/* QUESTION + CTA BUTTON */}
+      <div className="text-center mt-10 mb-4">
+
+        {/* UPDATED QUESTION (BIGGER) */}
+        <h3 className="text-xl font-medium text-gray-800 my-4">
           Still confused which program suits your child?
         </h3>
 
+        {/* UPDATED BUTTON (LARGER + SHADOW + ANIMATION) */}
         <button
           ref={buttonRef}
-          className="premium-gray-button"
+          className="
+            px-8 py-3 
+            rounded-full 
+            shadow-md bg-[#F7C948]
+            hover:-translate-y-1 hover:shadow-lg 
+            transition-all
+            font-semibold text-black
+          "
         >
-          CONNECT US
+          Connect Us
         </button>
+
       </div>
     </section>
   );

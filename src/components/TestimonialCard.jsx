@@ -11,28 +11,28 @@ const testimonials = [
     author: "Ayesha Rahman",
     position: "Parent of Grade 7 Student",
     img: "images/testimonial1.jpeg",
-    textColor: "text-violet-800",
+    textColor: "#6C4DF4",
   },
   {
     text: "We tried many platforms but NOTHING worked like this. One-on-one attention made a huge difference.",
     author: "Mohammed Imran",
     position: "Parent",
     img: "images/testimonial2.jpeg",
-    textColor: "text-green-800",
+    textColor: "#6C4DF4",
   },
   {
     text: "As a parent, I finally feel relaxed. The weekly reports & communication are absolutely perfect.",
     author: "Priya Sharma",
     position: "Mother of Grade 6 Student",
     img: "images/testimonial3.jpeg",
-    textColor: "text-violet-800",
+    textColor: "#6C4DF4",
   },
   {
     text: "My son improved in confidence, discipline, and academics. The best decision we ever made!",
     author: "Arun Kumar",
     position: "Parent",
     img: "images/testimonial1.jpeg",
-    textColor: "text-violet-800",
+    textColor: "#6C4DF4",
   },
 ];
 
@@ -41,7 +41,7 @@ export default function TestimonialCard() {
     const cards = gsap.utils.toArray(".testimonial-card");
     const images = gsap.utils.toArray(".image-wrapper");
 
-    // IMAGE ANIMATION
+    /* IMAGE ANIMATION */
     images.forEach((img) => {
       const angle = gsap.utils.random(-12, 12);
 
@@ -64,7 +64,7 @@ export default function TestimonialCard() {
       );
     });
 
-    // TEXT ANIMATION
+    /* TEXT ANIMATION */
     cards.forEach((card) => {
       const quote = card.querySelector(".quote");
       const author = card.querySelector(".author-block");
@@ -81,8 +81,8 @@ export default function TestimonialCard() {
           },
           opacity: 1,
           y: 0,
-          ease: "power2.out",
           stagger: 0.2,
+          ease: "power2.out",
         }
       );
     });
@@ -101,10 +101,9 @@ export default function TestimonialCard() {
       </div>
 
       {/* TESTIMONIAL GRID */}
-      <div className="max-w-7xl mx-auto mt-14 mb-20 px-4">
+      <div className="max-w-7xl mx-auto mt-14 px-4">
 
-        {/* BIG WIDE CARDS — 2 per row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-20">
 
           {testimonials.map((item, i) => (
             <div
@@ -113,11 +112,13 @@ export default function TestimonialCard() {
                 testimonial-card
                 bg-white rounded-2xl shadow-xl
                 p-10 sm:p-9 
-                flex flex-col md:flex-row items-center gap-8
+                flex flex-col md:flex-row 
+                items-center 
+                gap-10 md:gap-14
                 w-full
               "
             >
-              {/* BIG IMAGE CARD */}
+              {/* IMAGE CARD */}
               <div
                 className="
                   image-wrapper
@@ -137,10 +138,8 @@ export default function TestimonialCard() {
               </div>
 
               {/* TEXT SECTION */}
-              <div className="flex-1">
-                <p
-                  className={`quote text-md sm:text-md leading-relaxed ${item.textColor}`}
-                >
+              <div className="flex-1 pr-10 md:pr-14">
+                <p className={`quote text-md leading-relaxed ${item.textColor}`}>
                   {item.text}
                 </p>
 
@@ -150,14 +149,44 @@ export default function TestimonialCard() {
                   </h4>
                   <p className="text-sm text-gray-500">{item.position}</p>
                 </div>
+
+                {/* VERIFIED BADGE */}
+                <span
+                  className="
+                    inline-block mt-3 
+                    bg-green-100 text-green-700 
+                    text-xs font-semibold 
+                    px-3 py-1 
+                    rounded-full
+                  "
+                >
+                  ✔ Verified Parent
+                </span>
               </div>
             </div>
           ))}
-
         </div>
+      </div>
+
+      {/* CTA UNDER TESTIMONIALS */}
+      <div className="text-center mb-20 px-4">
+        <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
+          Join 1000+ families improving with Mash Magic
+        </h3>
+
+        <button
+          className="
+            mt-5 px-8 py-3 
+            bg-[#F8BA2B] text-black
+            rounded-full 
+            shadow-md 
+            hover:shadow-lg hover:-translate-y-1
+            transition-all font-semibold
+          "
+        >
+          Book Free Demo
+        </button>
       </div>
     </>
   );
 }
-
-

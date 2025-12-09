@@ -114,7 +114,9 @@ const CardGlass = ({ title, subtitle, points, imageUrl }) => {
 
       {/* TEXT BOX */}
       <div className="flex flex-col w-[90%] mx-auto bg-white/80 text-center gap-2 py-6 rounded-2xl shadow-md">
-        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900">
+
+        {/* UPDATED TITLE */}
+        <h2 className="text-xl font-semibold text-[#1A1A1A]">
           {title}
         </h2>
 
@@ -122,7 +124,8 @@ const CardGlass = ({ title, subtitle, points, imageUrl }) => {
           {subtitle}
         </p>
 
-        <ul className="text-gray-700 text-xs md:text-base space-y-1 mx-auto w-fit">
+        {/* UPDATED BULLETS */}
+        <ul className="text-[16px] text-[#4B5563] leading-relaxed space-y-1 mx-auto w-fit">
           {points.map((p, i) => (
             <li key={i} className="flex gap-2 items-start text-left">
               <span className="text-[#008080] font-bold">•</span>
@@ -130,6 +133,7 @@ const CardGlass = ({ title, subtitle, points, imageUrl }) => {
             </li>
           ))}
         </ul>
+
       </div>
     </div>
   );
