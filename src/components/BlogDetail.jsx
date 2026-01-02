@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { blogs } from "../data/blogs";
 
-import MentoringArticle from "../components/blogSections/mentoringArticle";
+import MentoringArticle from "../components/blogSections/MentoringArticle";
 import FortyFive from "../components/blogSections/FourtyFive";
 import StudyHardLearnLess from "./blogSections/StudyHardLessLearn";
 import EmotionalSupportVsPressure from "./blogSections/EmotionalSupportVsPressure";
