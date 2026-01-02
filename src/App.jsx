@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import Navbar from "./components/Hero/Navbar";
@@ -7,20 +8,17 @@ import CardGrid from "./components/CardGrid";
 import OurPrograms from "./components/OurPrograms";
 import TestimonialCards from "./components/TestimonialCard";
 import Footer from "./components/Footer";
-import ContactForm from "./components/ContactForm";
-import WhyUs from "./components/Hero/WhyUs";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import BlogList from "./components/BlogList";
+import BlogDetail from "./components/BlogDetail";
 
-
-function App() {
-  // Section refs for scrolling
+/* =========================
+   HOME PAGE
+========================= */
+function HomePage() {
   const heroRef = useRef(null);
   const whyUsRef = useRef(null);
   const programsRef = useRef(null);
   const testimonialRef = useRef(null);
-  
- 
-
 
   return (
     <>
@@ -31,34 +29,39 @@ function App() {
         testimonialRef={testimonialRef}
       />
 
-      {/* HERO SECTION */}
       <section ref={heroRef} id="hero">
         <Hero />
       </section>
 
-      {/* WHY US SECTION */}
       <section ref={whyUsRef} id="whyus">
         <CardGrid />
       </section>
 
-      {/* PROGRAMS SECTION */}
       <section ref={programsRef} id="programs">
         <OurPrograms />
       </section>
 
-      {/* TESTIMONIAL SECTION */}
       <section ref={testimonialRef} id="testimonial">
         <TestimonialCards />
       </section>
 
-      {/* FOOTER */}
+      {/* BLOG PREVIEW */}
+     
+
       <Footer />
-
-
-  
-
     </>
   );
 }
 
-export default App;
+/* =========================
+   APP ROUTES
+========================= */
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/blogs" element={<BlogList />} />
+      <Route path="/blog/:id" element={<BlogDetail />} />
+    </Routes>
+  );
+}

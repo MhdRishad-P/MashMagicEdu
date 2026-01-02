@@ -1,0 +1,50 @@
+export const blogs = [
+  {
+    id: "1",
+    slug: "mentoring-vs-tuition-2026",
+    title: "Why Mentoring Matters More Than Tuition in 2026",
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644",
+    type: "component",
+    componentKey: "mentoring",
+  },
+  {
+    id: "2",
+    slug: "45-hour-revision",
+    title: "45-Hour Revision: Why Smart Revision Beats Long Study Hours",
+    image: "https://images.unsplash.com/photo-1513258496099-48168024aec0",
+    type: "component",
+    componentKey: "fortyFive",
+  },
+  {
+    id: "3",
+    slug: "study-hard-learn-less",
+    title: "Why Most Students Study Hard but Learn Less in 2026",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c",
+    type: "component",
+    componentKey:"studyHardLearnLess"
+  },
+  {
+    id: "4",
+    slug: "emotional-support-vs-pressure",
+    title: "Emotional Support vs Pressure: The Parenting Balance Every Child Needs in 2026",
+    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7",
+    type: "component",
+    componentKey: "emotionalSupportVsPressure",
+  },
+  {
+    id: "5",
+    slug: "why-mash-magic",
+    title: "Why Mash Magic Is India’s First True Mentoring-Based Learning Platform",
+    image: "https://images.unsplash.com/photo-1581090700227-1e37b190418e",
+    type: "component",
+    componentKey:"WhyMashMagic",
+  },
+  {
+    id: "6",
+    slug: "online-tuition-2026",
+    title: "Online Tuition in 2026: What Really Makes It Work for Students",
+    image: "https://images.unsplash.com/photo-1507537297725-24a1c029d3ca",
+    type: "component",
+    componentKey: "onlineTuition2026",
+  },
+];

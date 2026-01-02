@@ -5,13 +5,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const programs = [
-  { img: "/images/program1.png", subtitle: "Skill-building foundation" },
-  { img: "/images/program1.png", subtitle: "Everyday learning support" },
-  { img: "/images/program1.png", subtitle: "Full subject mastery in 45 hours" },
-  { img: "/images/program1.png", subtitle: "Quick chapter revision" },
-  { img: "/images/program1.png", subtitle: "Last-stage exam prep" },
-  { img: "/images/program1.png", subtitle: "High-performance training" },
-  { img: "/images/program1.png", subtitle: "Full mentorship system" },
+  { img: "/courses/BrightBridge.png", subtitle: "Skill-building foundation", name: "Bright Bridge" },
+  { img: "/courses/classMate.png", subtitle: "Everyday learning support", name:"classMate" },
+  { img: "/courses/Crash45.png", subtitle: "Full subject mastery in 45 hours",name:"crash45" },
+  { img: "/courses/FinalTouch.png", subtitle: "Last-stage exam prep", name:"Final Touch" },
+  { img: "/courses/missionX.png", subtitle: "High-performance training",name:"Mission-X" },
+ 
 ];
 
 export default function OurProgramsMarquee() {
@@ -215,3 +214,8 @@ export default function OurProgramsMarquee() {
     </section>
   );
 }
+
+
+
+
+

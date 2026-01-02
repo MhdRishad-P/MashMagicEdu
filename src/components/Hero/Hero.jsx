@@ -14,7 +14,7 @@ const Hero = () => {
 
   // GSAP Popup Animation
   useEffect(() => {
-    if (showForm) {
+    if (showForm && popupRef.current) {
       gsap.fromTo(
         popupRef.current,
         { y: -100, opacity: 0, scale: 0.9 },
@@ -32,7 +32,7 @@ const Hero = () => {
   const dynamicWordRef = useRef(null);
 
   const numbers = [
-    { label: "Trusted Parents", value: 3700, image: "/images/happyparents.png" },
+    { label: "Trusted Parents", value: 3700, image: "/images/HappyParents2.png" },
     { label: "Success Stories", value: 1000, image: "/images/success.png" },
     { label: "Countries", value: 12, image: "/images/country.png" },
   ];
@@ -40,7 +40,7 @@ const Hero = () => {
   // ---------------- HERO Page Animations ----------------
   useGSAP(() => {
     const ctx = gsap.context(() => {
-      // Typewriter
+      // Typewriter Dynamic Words
       if (dynamicWordRef.current) {
         const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.5 });
 
@@ -82,7 +82,7 @@ const Hero = () => {
         });
       }
 
-      // Entrance
+      // Entrance Animations
       gsap.from(leftRef.current, {
         x: -50,
         opacity: 0,
@@ -98,7 +98,7 @@ const Hero = () => {
         delay: 0.3,
       });
 
-      // Counters
+      // Number Counters
       counterRef.current.forEach((el, i) => {
         if (!el) return;
 
@@ -125,7 +125,7 @@ const Hero = () => {
         );
       });
 
-      // Floating circles
+      // Floating Circles
       gsap.to(circle1Ref.current, {
         scale: 1.1,
         duration: 3,
@@ -145,19 +145,16 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="pt-[80px] md:pt-[110px] px-4 sm:px-6 md:px-10 max-w-[1400px] mx-auto relative">
+    <div className="pt-[90px] md:pt-[60px] px-4 sm:px-6 md:px-10 max-w-[1400px] mx-auto relative">
 
       {/* ---------------- POPUP OVERLAY ---------------- */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50">
-          <div ref={popupRef} className="relative">
-            <button
-              onClick={() => setShowForm(false)}
-              className="absolute -top-4 -right-4 bg-white p-2 rounded-full shadow-xl"
-            >
-              ✖
-            </button>
-            <ContactForm />
+        <div className="fixed inset-0 bg-black/40 z-[999999] flex justify-center items-center p-4">
+          <div
+            ref={popupRef}
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6"
+          >
+            <ContactForm onClose={() => setShowForm(false)} />
           </div>
         </div>
       )}
@@ -167,14 +164,14 @@ const Hero = () => {
 
         {/* LEFT TEXT SECTION */}
         <div ref={leftRef} className="z-10 text-center md:text-left space-y-5 sm:space-y-6">
-
           <p className="text-gray-500 text-base sm:text-lg md:text-xl font-semibold">
             Welcome To Mash Magic
           </p>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight">
-
-            <span className="font-bold text-[#008080] block sm:inline">India’s{" "}</span>
+            <span className="font-bold text-[#008080] block sm:inline">
+              India’s{" "}
+            </span>
 
             <span className="inline-block min-w-[120px] sm:min-w-[160px] md:min-w-[200px]">
               <span ref={dynamicWordRef} className="text-[#333] font-bold"></span>
@@ -217,7 +214,7 @@ const Hero = () => {
                   <span className="count"></span>+
                 </span>
 
-                <p className="text-black w-[200px] text-xs sm:text-sm  font-medium mt-1">
+                <p className="text-black w-[200px] text-xs sm:text-sm font-medium mt-1">
                   {item.label}
                 </p>
               </div>
@@ -227,7 +224,6 @@ const Hero = () => {
 
         {/* RIGHT IMAGE SECTION */}
         <div className="relative flex justify-center md:justify-end min-h-[300px] sm:min-h-[380px] md:min-h-[450px]">
-
           <div className="absolute inset-0 -z-10 pointer-events-none">
             <svg className="w-full h-full opacity-30">
               <circle ref={circle1Ref} cx="120" cy="150" r="60" fill="#FABB2A" />
@@ -242,7 +238,6 @@ const Hero = () => {
             className="relative z-10 w-[220px] sm:w-[300px] md:w-[360px] lg:w-[440px] xl:w-[520px] object-contain"
           />
         </div>
-
       </div>
     </div>
   );

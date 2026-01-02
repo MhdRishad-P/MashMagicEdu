@@ -55,9 +55,9 @@ export default function Footer() {
         <div>
           <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
           <ul className="space-y-3 text-sm">
-            <a href="#whyus "  className="hover:text-[#2FD1C6] transition cursor-pointer" >Why Us</a>
-            <a className="hover:text-[#2FD1C6] transition cursor-pointer" href="#programs">Programs</a>
-            <a className="hover:text-[#2FD1C6] transition cursor-pointer" href="#testimonial">Testimonials</a>
+           <li><a href="#whyus "  className="hover:text-[#2FD1C6] transition cursor-pointer" >Why Us</a></li> 
+            <li><a className="hover:text-[#2FD1C6] transition cursor-pointer" href="#programs">Programs</a></li>
+           <li><a className="hover:text-[#2FD1C6] transition cursor-pointer" href="#testimonial">Testimonials</a></li> 
           </ul>
         </div>
 
