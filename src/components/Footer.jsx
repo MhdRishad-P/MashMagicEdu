@@ -104,7 +104,7 @@ export default function Footer() {
 
       {/* ===================== COPYRIGHT ===================== */}
       <p className="text-center text-xs text-[#C7D4D4]">
-        © 2025 Mash Magic Learning Pvt. Ltd. All rights reserved.
+        © 2026 Mash Magic Learning Pvt. Ltd. All rights reserved.
       </p>
     </footer>
   );

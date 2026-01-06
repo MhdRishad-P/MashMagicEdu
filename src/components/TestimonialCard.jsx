@@ -1,29 +1,30 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ContactForm from "./ContactForm";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
-    text: "Mash Magic completely transformed my child’s learning habits. The mentor support is unmatched!",
-    author: "Ayesha Rahman",
-    position: "Parent of Grade 7 Student",
+    text: "The classes are excellent,espacially since i had  difficulty in Mathematics .The Teachers are amazing ,and they took great care of my child.",
+    author: "Alphin Shibu",
+    position: "Grade 9th  STATE | Kerala",
     img: "images/testimonial1.jpeg",
     textColor: "#6C4DF4",
   },
   {
-    text: "We tried many platforms but NOTHING worked like this. One-on-one attention made a huge difference.",
-    author: "Mohammed Imran",
-    position: "Parent",
+    text: "As I complete my final course with Mash Magic Revision ,I want to express my gratitude .The discipline helped me gain real confidence for my boards.",
+    author: "Bezal Sanoj",
+    position: "+2 CBSE | Qatar",
     img: "images/testimonial2.jpeg",
     textColor: "#6C4DF4",
   },
   {
-    text: "As a parent, I finally feel relaxed. The weekly reports & communication are absolutely perfect.",
-    author: "Priya Sharma",
-    position: "Mother of Grade 6 Student",
+    text: "He said was really good All ur faculty are very good ,supportive and co-operative .Thank you so much for allotting such good teachers and mentor.Thank you Mash magic.",
+    author: "Adv.Sujitha.K.S",
+    position: "M/o M.Suryadev | Grade +2 CBSE ",
     img: "images/testimonial3.jpeg",
     textColor: "#6C4DF4",
   },
@@ -37,6 +38,23 @@ const testimonials = [
 ];
 
 export default function TestimonialCard() {
+   
+  const [showForm, setShowForm] = useState(false);
+  const popupRef = useRef(null);
+
+  // GSAP Popup Animation
+  useEffect(() => {
+    if (showForm && popupRef.current) {
+      gsap.fromTo(
+        popupRef.current,
+        { y: -100, opacity: 0, scale: 0.9 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }
+      );
+    }
+  }, [showForm]);
+
+
+
   useGSAP(() => {
     const cards = gsap.utils.toArray(".testimonial-card");
     const images = gsap.utils.toArray(".image-wrapper");
@@ -90,6 +108,20 @@ export default function TestimonialCard() {
 
   return (
     <>
+
+        {/* ---------------- POPUP OVERLAY ---------------- */}
+          {showForm && (
+            <div className="fixed inset-0 bg-black/40 z-[999999] flex justify-center items-center p-4">
+              <div
+                ref={popupRef}
+                className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6"
+              >
+                <ContactForm onClose={() => setShowForm(false)} />
+              </div>
+            </div>
+          )}
+
+
       {/* TITLE */}
       <div className="pt-14 text-center px-4">
         <h2 className="text-3xl sm:text-4xl font-semibold text-[#008080]">
@@ -170,21 +202,16 @@ export default function TestimonialCard() {
 
       {/* CTA UNDER TESTIMONIALS */}
       <div className="text-center mb-20 px-4">
-        <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
+        <h3 className="text-xl md:text-2xl font-semibold text-gray-800 mb-5">
           Join 1000+ families improving with Mash Magic
         </h3>
 
-        <button
+        <button onClick={() => setShowForm(true)} 
           className="
-            mt-5 px-8 py-3 
-            bg-[#F8BA2B] text-black
-            rounded-full 
-            shadow-md 
-            hover:shadow-lg hover:-translate-y-1
-            transition-all font-semibold
+            premium-gray-button 
           "
         >
-          Book Free Demo
+          BOOK FREE DEMO
         </button>
       </div>
     </>

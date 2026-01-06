@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import BlogList from "./components/BlogList";
 import BlogDetail from "./components/BlogDetail";
 
+
 /* =========================
    HOME PAGE
 ========================= */
@@ -22,6 +23,7 @@ function HomePage() {
 
   return (
     <>
+     
       <Navbar
         heroRef={heroRef}
         whyUsRef={whyUsRef}
@@ -49,6 +51,7 @@ function HomePage() {
      
 
       <Footer />
+   
     </>
   );
 }

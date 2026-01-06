@@ -1,6 +1,8 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ContactForm from "./ContactForm";
+
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,84 +12,92 @@ const programs = [
   { img: "/courses/Crash45.png", subtitle: "Full subject mastery in 45 hours",name:"crash45" },
   { img: "/courses/FinalTouch.png", subtitle: "Last-stage exam prep", name:"Final Touch" },
   { img: "/courses/missionX.png", subtitle: "High-performance training",name:"Mission-X" },
- 
 ];
 
 export default function OurProgramsMarquee() {
   const marqueeRef = useRef(null);
-  const speedRef = useRef(0.4);
-  const lastTouchX = useRef(0);
   const titleRefs = useRef([]);
   const buttonRef = useRef(null);
+
+  const [showForm, setShowForm] = useState(false);
+    const popupRef = useRef(null);
+  
+    // GSAP Popup Animation
+    useEffect(() => {
+      if (showForm && popupRef.current) {
+        gsap.fromTo(
+          popupRef.current,
+          { y: -100, opacity: 0, scale: 0.9 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }
+        );
+      }
+    }, [showForm]);
 
   const isTouchDevice =
     typeof window !== "undefined" &&
     ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
-  /* MARQUEE MOVEMENT */
+  /* =====================================================
+     SMOOTH AUTO + INFINITE MARQUEE
+  ===================================================== */
   useEffect(() => {
     const marquee = marqueeRef.current;
     if (!marquee) return;
 
-    const wrapper = marquee.parentElement;
-    let currentX = 0;
+    let x = 0;
+    let currentSpeed = 0.35;   // actual moving speed
+    let targetSpeed = 0.35;    // what input controls
+    const smoothness = 0.06;   // lower = smoother
 
     const tick = () => {
-      currentX += speedRef.current;
-      marquee.style.transform = `translateX(${currentX}px)`;
+      // inertia smoothing
+      currentSpeed += (targetSpeed - currentSpeed) * smoothness;
+      x -= currentSpeed;
 
       const limit = marquee.scrollWidth / 2;
-      if (currentX <= -limit) currentX = 0;
-      if (currentX > 0) currentX = -limit;
+
+      // true infinite loop (both directions)
+      if (x <= -limit) x += limit;
+      if (x >= 0) x -= limit;
+
+      marquee.style.transform = `translateX(${x}px)`;
     };
 
     gsap.ticker.add(tick);
 
-    /* Desktop mouse speed */
+    /* ---------- DESKTOP MOUSE CONTROL ---------- */
     const handleMouseMove = (e) => {
       const center = window.innerWidth / 2;
-      const v = (e.clientX - center) / 150;
-      speedRef.current = v;
+      const delta = (e.clientX - center) / center;
+
+      targetSpeed = 0.35 + delta * 0.2;
+      targetSpeed = gsap.utils.clamp(0.05, 0.7, targetSpeed);
     };
 
     if (!isTouchDevice) {
       window.addEventListener("mousemove", handleMouseMove);
     }
 
-    /* Mobile touch scroll */
-    let touchActive = false;
+    /* ---------- TOUCH CONTROL ---------- */
+    let lastX = 0;
 
     const onTouchStart = (e) => {
-      if (!e.touches.length) return;
-      touchActive = true;
-      lastTouchX.current = e.touches[0].clientX;
-      speedRef.current = 0;
+      lastX = e.touches[0].clientX;
     };
 
     const onTouchMove = (e) => {
-      if (!touchActive || !e.touches.length) return;
+      const xNow = e.touches[0].clientX;
+      const delta = xNow - lastX;
+      lastX = xNow;
 
-      const touchX = e.touches[0].clientX;
-      const deltaX = touchX - lastTouchX.current;
-      lastTouchX.current = touchX;
-
-      const targetSpeed = Math.max(-10, Math.min(5, deltaX / 12));
-
-      gsap.to(speedRef, {
-        current: targetSpeed,
-        duration: 0.12,
-        ease: "power2.out",
-      });
+      targetSpeed = gsap.utils.clamp(-1, 1, delta * 0.03);
     };
 
     const onTouchEnd = () => {
-      touchActive = false;
-      gsap.to(speedRef, {
-        current: 0.4,
-        duration: 1,
-        ease: "power3.out",
-      });
+      targetSpeed = 0.35; // return smoothly to auto scroll
     };
+
+    const wrapper = marquee.parentElement;
 
     if (isTouchDevice && wrapper) {
       wrapper.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -98,10 +108,9 @@ export default function OurProgramsMarquee() {
 
     return () => {
       gsap.ticker.remove(tick);
+      window.removeEventListener("mousemove", handleMouseMove);
 
-      if (!isTouchDevice) window.removeEventListener("mousemove", handleMouseMove);
-
-      if (isTouchDevice && wrapper) {
+      if (wrapper) {
         wrapper.removeEventListener("touchstart", onTouchStart);
         wrapper.removeEventListener("touchmove", onTouchMove);
         wrapper.removeEventListener("touchend", onTouchEnd);
@@ -110,7 +119,9 @@ export default function OurProgramsMarquee() {
     };
   }, [isTouchDevice]);
 
-  /* TITLE ENTRY ANIMATION */
+  /* =====================================================
+     TITLE ANIMATION
+  ===================================================== */
   useEffect(() => {
     gsap.fromTo(
       titleRefs.current,
@@ -120,7 +131,7 @@ export default function OurProgramsMarquee() {
         y: 0,
         duration: 1,
         ease: "power3.out",
-        stagger: 0.15,
+        stagger: 0.12,
         scrollTrigger: {
           trigger: ".marquee-wrapper",
           start: "top 90%",
@@ -129,7 +140,9 @@ export default function OurProgramsMarquee() {
     );
   }, []);
 
-  /* FLOATING BUTTON ANIMATION */
+  /* =====================================================
+     FLOATING BUTTON
+  ===================================================== */
   useEffect(() => {
     if (!buttonRef.current) return;
     gsap.to(buttonRef.current, {
@@ -142,9 +155,20 @@ export default function OurProgramsMarquee() {
   }, []);
 
   return (
-    <section className="py-10 overflow-hidden bg-white">
+    <section className="py-10 overflow-hidden bg-white select-none">
 
-      {/* SECTION TITLE */}
+         {/* ---------------- POPUP OVERLAY ---------------- */}
+            {showForm && (
+              <div className="fixed inset-0 bg-black/40 z-[999999] flex justify-center items-center p-4">
+                <div
+                  ref={popupRef}
+                  className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6"
+                >
+                  <ContactForm onClose={() => setShowForm(false)} />
+                </div>
+              </div>
+            )}
+
       <h2 className="text-2xl md:text-5xl font-semibold text-center text-[#008080] mb-3">
         Explore Our Programs
       </h2>
@@ -155,30 +179,21 @@ export default function OurProgramsMarquee() {
 
       {/* MARQUEE */}
       <div className="relative w-full overflow-hidden marquee-wrapper">
-        <div ref={marqueeRef} className="flex items-center whitespace-nowrap gap-12 px-4">
+        <div
+          ref={marqueeRef}
+          className="flex items-center whitespace-nowrap gap-12 px-4"
+        >
           {[...programs, ...programs].map((p, i) => (
             <div key={i} className="flex flex-col items-center min-w-[200px]">
+              <img
+                src={p.img}
+                alt={p.subtitle}
+                className="w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] object-contain"
+              />
 
-              {/* ICON */}
-              <div
-                className={`transition-all duration-300 ${
-                  !isTouchDevice
-                    ? "hover:scale-110 hover:drop-shadow-[0_6px_18px_rgba(0,128,128,0.35)]"
-                    : ""
-                }`}
-              >
-                <img
-                  src={p.img}
-                  alt={p.subtitle}
-                  className="w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] object-contain"
-                />
-              </div>
-
-              {/* SUBTITLE */}
               <p
                 ref={(el) => (titleRefs.current[i] = el)}
-                className="text-gray-700 text-sm font-medium mt-2 text-center leading-snug"
-                style={{ fontFamily: "Poppins" }}
+                className="text-gray-700 text-sm font-medium mt-2 text-center"
               >
                 {p.subtitle}
               </p>
@@ -187,35 +202,16 @@ export default function OurProgramsMarquee() {
         </div>
       </div>
 
-      {/* QUESTION + CTA BUTTON */}
-      <div className="text-center mt-10 mb-4">
-
-        {/* UPDATED QUESTION (BIGGER) */}
-        <h3 className="text-xl font-medium text-gray-800 my-4">
+      {/* CTA */}
+      <div className="text-center mt-10">
+        <h3 className="text-gray-600 text-base md:text-xl text-center mb-5">
           Still confused which program suits your child?
         </h3>
 
-        {/* UPDATED BUTTON (LARGER + SHADOW + ANIMATION) */}
-        <button
-          ref={buttonRef}
-          className="
-            px-8 py-3 
-            rounded-full 
-            shadow-md bg-[#F7C948]
-            hover:-translate-y-1 hover:shadow-lg 
-            transition-all
-            font-semibold text-black
-          "
-        >
-          Connect Us
-        </button>
-
+            <button onClick={() => setShowForm(true)} className="premium-gray-button">
+              CONNECT US
+            </button>
       </div>
     </section>
   );
 }
-
-
-
-
-
