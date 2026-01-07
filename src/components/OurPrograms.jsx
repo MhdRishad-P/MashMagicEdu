@@ -1,7 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ContactForm from "./ContactForm";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,54 +15,49 @@ const programs = [
 export default function OurProgramsMarquee() {
   const marqueeRef = useRef(null);
   const titleRefs = useRef([]);
-  const popupRef = useRef(null);
-
-  const [showForm, setShowForm] = useState(false);
 
   const isTouch =
     typeof window !== "undefined" &&
     ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
   /* =====================================================
-     MARQUEE – SCROLL SPEED + MOUSE DIRECTION
+     MARQUEE – MOBILE TOUCH SCROLL (FIXED)
   ===================================================== */
   useEffect(() => {
     const marquee = marqueeRef.current;
     if (!marquee) return;
 
     let x = 0;
-
-    const BASE_SPEED = 0.3; // default right
+    const BASE_SPEED = 0.25; // desktop default
     let currentSpeed = BASE_SPEED;
     let targetSpeed = BASE_SPEED;
 
+    let touchVelocity = 0;
     let mouseInfluence = 0;
-    let wheelVelocity = 0;
     let pageScrollVelocity = 0;
 
     let lastScrollY = window.scrollY;
-    let isPaused = false;
+    const limit = marquee.scrollWidth / 2;
 
     const smoothness = 0.08;
-    const decay = 0.9;
-    const limit = marquee.scrollWidth / 2;
+    const decay = 0.92;
 
     /* ---------- MAIN LOOP ---------- */
     const tick = () => {
-      if (isPaused) return;
-
-      wheelVelocity *= decay;
-      pageScrollVelocity *= decay;
-
-      targetSpeed =
-        BASE_SPEED +
-        mouseInfluence +
-        wheelVelocity +
-        pageScrollVelocity;
+      if (isTouch) {
+        // MOBILE: only touch momentum
+        touchVelocity *= decay;
+        targetSpeed = touchVelocity;
+      } else {
+        // DESKTOP: base + mouse + page scroll
+        pageScrollVelocity *= decay;
+        targetSpeed =
+          BASE_SPEED + mouseInfluence + pageScrollVelocity;
+      }
 
       targetSpeed = gsap.utils.clamp(-1.5, 1.5, targetSpeed);
-
       currentSpeed += (targetSpeed - currentSpeed) * smoothness;
+
       x += currentSpeed;
 
       if (x >= 0) x -= limit;
@@ -74,58 +68,49 @@ export default function OurProgramsMarquee() {
 
     gsap.ticker.add(tick);
 
-    /* ---------- PAUSE ON HOVER ---------- */
-    marquee.addEventListener("mouseenter", () => (isPaused = true));
-    marquee.addEventListener("mouseleave", () => (isPaused = false));
-
-    /* ---------- MOUSE POSITION → DIRECTION ---------- */
+    /* =====================================================
+       DESKTOP CONTROLS
+    ===================================================== */
     const onMouseMove = (e) => {
       const center = window.innerWidth / 2;
       const delta = (e.clientX - center) / center;
-
-      // LEFT → negative, RIGHT → positive
       mouseInfluence = delta * 0.8;
     };
 
-    /* ---------- PAGE SCROLL SPEED ---------- */
     const onScroll = () => {
-      const currentY = window.scrollY;
-      const delta = currentY - lastScrollY;
-      lastScrollY = currentY;
-
+      const y = window.scrollY;
+      const delta = y - lastScrollY;
+      lastScrollY = y;
       pageScrollVelocity = gsap.utils.clamp(-1, 1, delta * 0.015);
     };
 
-    /* ---------- SCROLL WHEEL ---------- */
-    const onWheel = (e) => {
-      wheelVelocity += e.deltaY * 0.002;
-      wheelVelocity = gsap.utils.clamp(-1.2, 1.2, wheelVelocity);
-    };
-
-    /* ---------- TOUCH ---------- */
+    /* =====================================================
+       MOBILE TOUCH CONTROLS (IMPORTANT)
+    ===================================================== */
     let lastX = 0;
 
     const onTouchStart = (e) => {
       lastX = e.touches[0].clientX;
+      touchVelocity = 0;
     };
 
     const onTouchMove = (e) => {
-      const nowX = e.touches[0].clientX;
-      const delta = nowX - lastX;
-      lastX = nowX;
+      const xNow = e.touches[0].clientX;
+      const delta = xNow - lastX;
+      lastX = xNow;
 
-      mouseInfluence = gsap.utils.clamp(-1.2, 1.2, delta * 0.06);
+      // finger movement → marquee velocity
+      touchVelocity = gsap.utils.clamp(-2, 2, delta * 0.12);
     };
 
     const onTouchEnd = () => {
-      mouseInfluence = 0;
+      // momentum continues automatically
     };
 
     const wrapper = marquee.parentElement;
 
     if (!isTouch) {
       window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("wheel", onWheel, { passive: true });
       window.addEventListener("scroll", onScroll, { passive: true });
     }
 
@@ -139,7 +124,6 @@ export default function OurProgramsMarquee() {
     return () => {
       gsap.ticker.remove(tick);
       window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("wheel", onWheel);
       window.removeEventListener("scroll", onScroll);
 
       if (wrapper) {
@@ -152,7 +136,7 @@ export default function OurProgramsMarquee() {
   }, [isTouch]);
 
   /* =====================================================
-     TITLES
+     TITLES ANIMATION
   ===================================================== */
   useEffect(() => {
     gsap.fromTo(
@@ -183,7 +167,10 @@ export default function OurProgramsMarquee() {
       </p>
 
       <div className="relative w-full overflow-hidden marquee-wrapper">
-        <div ref={marqueeRef} className="flex gap-12 whitespace-nowrap px-4">
+        <div
+          ref={marqueeRef}
+          className="flex gap-12 whitespace-nowrap px-4 touch-pan-y"
+        >
           {[...programs, ...programs].map((p, i) => (
             <div key={i} className="flex flex-col items-center min-w-[200px]">
               <img
